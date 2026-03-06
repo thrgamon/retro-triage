@@ -8,9 +8,7 @@ export function AnalysisView({ analysis, cards }: { analysis: AnalysisResponse; 
 	const cardMap = new Map(cards.map((c) => [c.id, c]));
 
 	return (
-		<div className="mt-8 border-t border-border pt-8">
-			<h2 className="mb-4 text-xl font-bold">Analysis</h2>
-
+		<div>
 			<Card className="mb-6">
 				<CardHeader>
 					<CardTitle className="text-base">Summary</CardTitle>

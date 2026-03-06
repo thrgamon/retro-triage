@@ -8,6 +8,7 @@ import type { ColumnType, CardResponse } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { X, Loader2 } from 'lucide-react';
 import { AnalysisView } from './analysis-view';
 
@@ -16,6 +17,10 @@ export default function RetroPage({ params }: { params: Promise<{ id: string }> 
 	const { data: retro, isLoading } = useRetro(id);
 	const { data: analysis } = useAnalysis(id);
 	const runAnalysis = useRunAnalysis(id);
+	const [activeTab, setActiveTab] = useState('board');
+
+	const analysisData = runAnalysis.data ?? analysis;
+	const hasAnalysis = !!analysisData;
 
 	if (isLoading) {
 		return <p className="p-8 text-muted-foreground">Loading...</p>;
@@ -34,7 +39,14 @@ export default function RetroPage({ params }: { params: Promise<{ id: string }> 
 					</Link>
 					<h1 className="text-2xl font-bold">{retro.name}</h1>
 				</div>
-				<Button onClick={() => runAnalysis.mutate()} disabled={runAnalysis.isPending || retro.cards.length === 0} size="lg">
+				<Button
+					onClick={async () => {
+						await runAnalysis.mutateAsync();
+						setActiveTab('analysis');
+					}}
+					disabled={runAnalysis.isPending || retro.cards.length === 0}
+					size="lg"
+				>
 					{runAnalysis.isPending ? (
 						<>
 							<Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -46,24 +58,37 @@ export default function RetroPage({ params }: { params: Promise<{ id: string }> 
 				</Button>
 			</div>
 
-			<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-				{COLUMN_TYPES.map((col) => (
-					<RetroColumn
-						key={col.type}
-						retroId={id}
-						columnType={col.type}
-						label={col.label}
-						colour={col.colour}
-						cards={retro.cards.filter((c) => c.column_type === col.type)}
-					/>
-				))}
-			</div>
-
 			{runAnalysis.isError && (
-				<p className="mt-4 text-sm text-destructive-foreground">Analysis failed: {runAnalysis.error.message}</p>
+				<p className="mb-4 text-sm text-destructive-foreground">Analysis failed: {runAnalysis.error.message}</p>
 			)}
 
-			{(analysis || runAnalysis.data) && <AnalysisView analysis={runAnalysis.data ?? analysis!} cards={retro.cards} />}
+			<Tabs value={activeTab} onValueChange={setActiveTab}>
+				<TabsList>
+					<TabsTrigger value="board">Board</TabsTrigger>
+					<TabsTrigger value="analysis" disabled={!hasAnalysis}>
+						Analysis
+					</TabsTrigger>
+				</TabsList>
+
+				<TabsContent value="board" className="mt-4">
+					<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+						{COLUMN_TYPES.map((col) => (
+							<RetroColumn
+								key={col.type}
+								retroId={id}
+								columnType={col.type}
+								label={col.label}
+								colour={col.colour}
+								cards={retro.cards.filter((c) => c.column_type === col.type)}
+							/>
+						))}
+					</div>
+				</TabsContent>
+
+				<TabsContent value="analysis" className="mt-4">
+					{hasAnalysis && <AnalysisView analysis={analysisData} cards={retro.cards} />}
+				</TabsContent>
+			</Tabs>
 		</main>
 	);
 }
