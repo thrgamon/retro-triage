@@ -1,18 +1,17 @@
 [tools]
-go = "1.25"
+go = "1.24"
 node = "22"
 
 [env]
 # Database
-POSTGRES_DB = "myapp"
+POSTGRES_DB = "retrotriage"
 POSTGRES_USER = "postgres"
 POSTGRES_PASSWORD = "postgres"
-DATABASE_URL = "postgres://postgres:postgres@localhost:5432/myapp?sslmode=disable"
+DATABASE_URL = "postgres://postgres:postgres@localhost:5432/retrotriage?sslmode=disable"
 
 # Application
 PORT = "8080"
 ENVIRONMENT = "development"
 
-# Auth
-COOKIE_SECURE = "false"
-SESSION_MAX_AGE = "604800"
+# OpenAI
+# OPENAI_API_KEY = "sk-..."

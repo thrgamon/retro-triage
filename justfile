@@ -25,7 +25,7 @@ backend:
 
 # Run frontend locally (outside docker)
 frontend:
-    npm install && npm run dev
+    yarn install && yarn run dev
 
 # Install git hooks
 install-hooks:
@@ -46,10 +46,9 @@ api-docs:
 api-types:
     npx orval
 
-# Full sync: sqlc + swagger + orval + format + type check
-sync: sqlc api-docs api-types
-    npx biome format --write src/lib/api/generated || true
-    npm run check
+# Full sync: sqlc + type check
+sync: sqlc
+    yarn run check
     go vet ./...
 
 # --- Quality ---
@@ -69,20 +68,20 @@ fmt:
 
 # Frontend lint
 fe-lint:
-    npm run lint
+    yarn run lint
 
 # Frontend lint with auto-fix
 fe-lint-fix:
-    npm run lint:fix
+    yarn run lint:fix
 
 # Frontend format
 fe-fmt:
-    npm run format
+    yarn run format
 
 # Run all checks (lint + test + type-check)
 check: lint test
-    npm run check
-    npm run lint
+    yarn run check
+    yarn run lint
 
 # --- E2E Tests ---
 
@@ -128,11 +127,11 @@ db-reset:
 
 # Build production Docker image
 build:
-    docker build -t myapp -f Dockerfile .
+    docker build -t retro-triage -f Dockerfile .
 
 # Build Dokku Docker image
 dokku-build:
-    docker build -t myapp-dokku -f Dockerfile.dokku .
+    docker build -t retro-triage-dokku -f Dockerfile.dokku .
 
 # Clean build artifacts
 clean:
@@ -150,23 +149,23 @@ dokku-deploy:
 
 # View Dokku app logs
 dokku-logs:
-    ssh dokku@$(just _dokku-host) logs myapp -t
+    ssh dokku@$(just _dokku-host) logs retro-triage -t
 
 # View Dokku app config
 dokku-config:
-    ssh dokku@$(just _dokku-host) config:show myapp
+    ssh dokku@$(just _dokku-host) config:show retro-triage
 
 # View Dokku app process status
 dokku-ps:
-    ssh dokku@$(just _dokku-host) ps:report myapp
+    ssh dokku@$(just _dokku-host) ps:report retro-triage
 
 # Connect to Dokku database
 dokku-db-connect:
-    ssh dokku@$(just _dokku-host) postgres:connect myapp-db
+    ssh dokku@$(just _dokku-host) postgres:connect retro-triage-db
 
 # Backup Dokku database locally
 dokku-db-backup:
-    ssh dokku@$(just _dokku-host) postgres:export myapp-db > myapp-db-backup.sql
+    ssh dokku@$(just _dokku-host) postgres:export retro-triage-db > retro-triage-db-backup.sql
 
 # --- Monitoring ---
 

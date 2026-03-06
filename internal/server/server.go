@@ -9,9 +9,9 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
-	"github.com/thrgamon/project-template/internal/api"
-	"github.com/thrgamon/project-template/internal/config"
-	"github.com/thrgamon/project-template/internal/middleware"
+	"github.com/thrgamon/retro-triage/internal/api"
+	"github.com/thrgamon/retro-triage/internal/config"
+	"github.com/thrgamon/retro-triage/internal/middleware"
 )
 
 type Options struct {

@@ -1,4 +1,4 @@
-FROM golang:1.25-alpine AS build
+FROM golang:1.24-alpine AS build
 WORKDIR /src
 RUN go install github.com/pressly/goose/v3/cmd/goose@latest
 COPY go.mod go.sum ./

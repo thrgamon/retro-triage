@@ -4,7 +4,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: myapp
+      POSTGRES_DB: retrotriage
     ports:
       - "5432:5432"
     volumes:
@@ -22,11 +22,10 @@ services:
     ports:
       - "8080:8080"
     environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/myapp?sslmode=disable
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/retrotriage?sslmode=disable
       PORT: "8080"
       ENVIRONMENT: development
-      COOKIE_SECURE: "false"
-      SESSION_MAX_AGE: "604800"
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
     volumes:
       - .:/app

@@ -12,9 +12,13 @@ sql:
         emit_empty_slices: true
         overrides:
           - db_type: "json"
-            go_type: "json.RawMessage"
+            go_type:
+              import: "encoding/json"
+              type: "RawMessage"
           - db_type: "jsonb"
-            go_type: "json.RawMessage"
+            go_type:
+              import: "encoding/json"
+              type: "RawMessage"
           - db_type: "uuid"
             go_type: "github.com/google/uuid.UUID"
           - db_type: "timestamptz"

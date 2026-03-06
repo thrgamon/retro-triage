@@ -1,28 +1,33 @@
 -- +goose Up
 
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE INDEX idx_users_email ON users (email);
-
-CREATE TABLE sessions (
+CREATE TABLE retros (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    token VARCHAR(64) UNIQUE NOT NULL,
-    expires_at TIMESTAMPTZ NOT NULL,
+    name TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_sessions_token ON sessions (token);
-CREATE INDEX idx_sessions_user_id ON sessions (user_id);
-CREATE INDEX idx_sessions_expires_at ON sessions (expires_at);
+CREATE TABLE cards (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    retro_id UUID NOT NULL REFERENCES retros(id) ON DELETE CASCADE,
+    column_type TEXT NOT NULL CHECK (column_type IN ('went_well', 'didnt_go_well', 'puzzling', 'action_item')),
+    content TEXT NOT NULL,
+    author_name TEXT NOT NULL DEFAULT '',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_cards_retro_id ON cards (retro_id);
+
+CREATE TABLE analyses (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    retro_id UUID NOT NULL UNIQUE REFERENCES retros(id) ON DELETE CASCADE,
+    result JSONB NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_analyses_retro_id ON analyses (retro_id);
 
 -- +goose Down
 
-DROP TABLE IF EXISTS sessions;
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS analyses;
+DROP TABLE IF EXISTS cards;
+DROP TABLE IF EXISTS retros;

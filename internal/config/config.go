@@ -3,16 +3,13 @@ package config
 import (
 	"os"
 	"strconv"
-	"time"
 )
 
 type Config struct {
-	Port          int
-	DatabaseURL   string
-	Environment   string
-	SessionMaxAge time.Duration
-	CookieDomain  string
-	CookieSecure  bool
+	Port        int
+	DatabaseURL string
+	Environment string
+	OpenAIKey   string
 }
 
 func LoadConfig() Config {
@@ -25,7 +22,7 @@ func LoadConfig() Config {
 
 	databaseURL := os.Getenv("DATABASE_URL")
 	if databaseURL == "" {
-		databaseURL = "postgres://postgres:postgres@localhost:5432/myapp?sslmode=disable"
+		databaseURL = "postgres://postgres:postgres@localhost:5432/retrotriage?sslmode=disable"
 	}
 
 	environment := os.Getenv("ENVIRONMENT")
@@ -33,24 +30,10 @@ func LoadConfig() Config {
 		environment = "development"
 	}
 
-	sessionMaxAge := 7 * 24 * time.Hour
-	if v, ok := os.LookupEnv("SESSION_MAX_AGE"); ok {
-		if secs, err := strconv.Atoi(v); err == nil {
-			sessionMaxAge = time.Duration(secs) * time.Second
-		}
-	}
-
-	cookieSecure := environment == "production"
-	if v, ok := os.LookupEnv("COOKIE_SECURE"); ok {
-		cookieSecure, _ = strconv.ParseBool(v)
-	}
-
 	return Config{
-		Port:          port,
-		DatabaseURL:   databaseURL,
-		Environment:   environment,
-		SessionMaxAge: sessionMaxAge,
-		CookieDomain:  os.Getenv("COOKIE_DOMAIN"),
-		CookieSecure:  cookieSecure,
+		Port:        port,
+		DatabaseURL: databaseURL,
+		Environment: environment,
+		OpenAIKey:   os.Getenv("OPENAI_API_KEY"),
 	}
 }

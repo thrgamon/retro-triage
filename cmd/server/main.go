@@ -13,14 +13,14 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/thrgamon/project-template/internal/api"
-	"github.com/thrgamon/project-template/internal/auth"
-	"github.com/thrgamon/project-template/internal/config"
-	"github.com/thrgamon/project-template/internal/db"
-	"github.com/thrgamon/project-template/internal/server"
+	"github.com/thrgamon/retro-triage/internal/analyser"
+	"github.com/thrgamon/retro-triage/internal/api"
+	"github.com/thrgamon/retro-triage/internal/config"
+	"github.com/thrgamon/retro-triage/internal/db"
+	"github.com/thrgamon/retro-triage/internal/server"
 )
 
-// @title My App API
+// @title Retro Triage API
 // @version 1.0
 // @host localhost:8080
 // @BasePath /api
@@ -47,10 +47,13 @@ func main() {
 	cancelPing()
 
 	queries := db.New(pool)
-	authSvc := auth.NewService(queries, cfg)
+	openaiClient := analyser.NewOpenAIClient(cfg.OpenAIKey)
+	anal := analyser.New(openaiClient)
+
 	handler := api.NewHandler(api.HandlerConfig{
-		Auth: authSvc,
-		Cfg:  cfg,
+		Queries:  queries,
+		Analyser: anal,
+		Cfg:      cfg,
 	})
 
 	srv := server.New(server.Options{
@@ -59,22 +62,6 @@ func main() {
 	})
 
 	addr := fmt.Sprintf(":%d", cfg.Port)
-
-	// Background session cleanup
-	go func() {
-		ticker := time.NewTicker(1 * time.Hour)
-		defer ticker.Stop()
-		for {
-			select {
-			case <-ticker.C:
-				if err := authSvc.DeleteExpiredSessions(context.Background()); err != nil {
-					slog.Error("cleaning expired sessions", "error", err)
-				}
-			case <-ctx.Done():
-				return
-			}
-		}
-	}()
 
 	go func() {
 		if err := srv.Run(addr); err != nil && !errors.Is(err, server.ErrServerClosed) {
