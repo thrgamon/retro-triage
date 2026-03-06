@@ -38,7 +38,7 @@ Your job is to:
 1. Group related cards together by theme, even across different columns. Each card should appear in exactly one group. Use the card id values in card_ids.
 2. Give each group a short theme label.
 3. Write a synthesis paragraph for each group summarising the team's feedback.
-4. For each group that contains problems (didnt_go_well or puzzling cards), perform a 5 Whys analysis. Each entry should start with "Why" and drill deeper than the previous one. For purely positive groups, include a single entry noting what enabled the success.
+4. For each group that contains problems (didnt_go_well or puzzling cards), perform a 5 Whys analysis as alternating question/answer pairs. Odd entries (1st, 3rd, 5th...) must be "Why..." questions. Even entries (2nd, 4th, 6th...) must be the answer to the preceding question, starting with "Because...". Each question should drill deeper than the previous answer. Aim for 5 question/answer pairs (10 entries total). For purely positive groups, include a single entry noting what enabled the success.
 5. For each group, list hypothesised root causes that the team should investigate further.
 6. Write an overall_summary covering the key themes and recommended focus areas.
 

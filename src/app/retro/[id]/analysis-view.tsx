@@ -48,11 +48,20 @@ export function AnalysisView({ analysis, cards }: { analysis: AnalysisResponse; 
 
 							<div>
 								<h4 className="mb-1 text-xs font-semibold uppercase text-muted-foreground">5 Whys</h4>
-								<ol className="list-inside list-decimal space-y-1 text-sm">
-									{group.five_whys.map((why, j) => (
-										<li key={`why-${j}`}>{why}</li>
-									))}
-								</ol>
+								<div className="space-y-2 text-sm">
+									{group.five_whys.map((why, j) => {
+										const isQuestion = why.toLowerCase().startsWith('why');
+										return (
+											<div key={`why-${j}`} style={{ marginLeft: `${Math.floor(j / 2) * 16}px` }}>
+												{isQuestion ? (
+													<p className="font-medium text-foreground">{why}</p>
+												) : (
+													<p className="text-muted-foreground">{why}</p>
+												)}
+											</div>
+										);
+									})}
+								</div>
 							</div>
 
 							<div>
