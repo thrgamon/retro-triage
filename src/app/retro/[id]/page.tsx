@@ -59,6 +59,10 @@ export default function RetroPage({ params }: { params: Promise<{ id: string }> 
 				))}
 			</div>
 
+			{runAnalysis.isError && (
+				<p className="mt-4 text-sm text-destructive-foreground">Analysis failed: {runAnalysis.error.message}</p>
+			)}
+
 			{(analysis || runAnalysis.data) && <AnalysisView analysis={runAnalysis.data ?? analysis!} cards={retro.cards} />}
 		</main>
 	);
